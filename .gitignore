@@ -1,0 +1,36 @@
+# Composer
+/vendor/
+composer.lock
+
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+.coverage
+
+# other
+NDNSv1.0.0.pdf
