@@ -24,6 +24,7 @@ class QueryOrderRequest extends BaseRequest
      *
      * @return array
      */
+    #[\Override]
     protected function getRules(): array
     {
         return [
@@ -37,6 +38,7 @@ class QueryOrderRequest extends BaseRequest
      *
      * @return string
      */
+    #[\Override]
     public function getResponseClass(): string
     {
         return QueryOrderResponse::class;

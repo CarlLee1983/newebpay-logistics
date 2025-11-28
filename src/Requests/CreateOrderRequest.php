@@ -27,18 +27,19 @@ class CreateOrderRequest extends BaseRequest
      *
      * @return array
      */
+    #[\Override]
     protected function getRules(): array
     {
         return [
             'MerchantOrderNo' => 'required',
-            'TradeType' => 'required|class_const:' . TradeType::class,
+            'TradeType' => 'required|enum:' . TradeType::class,
             'UserName' => 'required',
             'UserTel' => 'required',
             'UserEmail' => 'required',
             'StoreID' => 'required',
             'Amt' => 'required',
-            'LgsType' => 'required|class_const:' . LgsType::class,
-            'ShipType' => 'required|class_const:' . ShipType::class,
+            'LgsType' => 'required|enum:' . LgsType::class,
+            'ShipType' => 'required|enum:' . ShipType::class,
             'TimeStamp' => 'required',
         ];
     }
@@ -48,6 +49,7 @@ class CreateOrderRequest extends BaseRequest
      *
      * @return string
      */
+    #[\Override]
     public function getResponseClass(): string
     {
         return CreateOrderResponse::class;
@@ -114,9 +116,9 @@ class CreateOrderRequest extends BaseRequest
         return $this;
     }
 
-    public function setTradeType(string $type)
+    public function setTradeType(TradeType $type)
     {
-        $this->content['TradeType'] = $type;
+        $this->content['TradeType'] = $type->value;
         return $this;
     }
 
@@ -144,15 +146,15 @@ class CreateOrderRequest extends BaseRequest
         return $this;
     }
 
-    public function setLgsType(string $type)
+    public function setLgsType(LgsType $type)
     {
-        $this->content['LgsType'] = $type;
+        $this->content['LgsType'] = $type->value;
         return $this;
     }
 
-    public function setShipType(string $type)
+    public function setShipType(ShipType $type)
     {
-        $this->content['ShipType'] = $type;
+        $this->content['ShipType'] = $type->value;
         return $this;
     }
 

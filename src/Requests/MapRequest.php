@@ -26,12 +26,13 @@ class MapRequest extends BaseRequest
      *
      * @return array
      */
+    #[\Override]
     protected function getRules(): array
     {
         return [
             'MerchantOrderNo' => 'required',
-            'LgsType' => 'required|class_const:' . LgsType::class,
-            'ShipType' => 'required|class_const:' . ShipType::class,
+            'LgsType' => 'required|enum:' . LgsType::class,
+            'ShipType' => 'required|enum:' . ShipType::class,
             'ReturnURL' => 'required',
             'TimeStamp' => 'required',
         ];
@@ -42,6 +43,7 @@ class MapRequest extends BaseRequest
      *
      * @return string
      */
+    #[\Override]
     public function getResponseClass(): string
     {
         return Response::class;
@@ -95,15 +97,15 @@ class MapRequest extends BaseRequest
         return $this;
     }
 
-    public function setLgsType(string $type)
+    public function setLgsType(LgsType $type)
     {
-        $this->content['LgsType'] = $type;
+        $this->content['LgsType'] = $type->value;
         return $this;
     }
 
-    public function setShipType(string $type)
+    public function setShipType(ShipType $type)
     {
-        $this->content['ShipType'] = $type;
+        $this->content['ShipType'] = $type->value;
         return $this;
     }
 

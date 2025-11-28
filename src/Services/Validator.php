@@ -32,6 +32,11 @@ class Validator
                     if (!empty($data[$field])) {
                         $this->validateClassConst($data[$field], $className, $field);
                     }
+                } elseif (strpos($rule, 'enum:') === 0) {
+                    $className = substr($rule, 5);
+                    if (!empty($data[$field])) {
+                        $this->validateEnum($data[$field], $className, $field);
+                    }
                 }
             }
         }
@@ -56,6 +61,26 @@ class Validator
         $constants = $reflection->getConstants();
 
         if (!in_array($value, $constants)) {
+            throw new NewebPayLogisticsException("Invalid value '{$value}' for field {$field}");
+        }
+    }
+
+    /**
+     * Validate if value exists in Enum.
+     *
+     * @param mixed $value
+     * @param string $className
+     * @param string $field
+     * @return void
+     * @throws NewebPayLogisticsException
+     */
+    protected function validateEnum($value, string $className, string $field): void
+    {
+        if (!enum_exists($className)) {
+             throw new NewebPayLogisticsException("Validation rule error: Enum {$className} not found");
+        }
+
+        if (!$className::tryFrom($value)) {
             throw new NewebPayLogisticsException("Invalid value '{$value}' for field {$field}");
         }
     }

@@ -16,28 +16,15 @@ use GuzzleHttp\ClientInterface;
 class NewebPayLogistics
 {
     /**
-     * Operation factory.
-     *
-     * @var OperationFactoryInterface
-     */
-    protected OperationFactoryInterface $factory;
-    /**
-     * HTTP Client.
-     *
-     * @var ClientInterface
-     */
-    protected ClientInterface $client;
-
-    /**
      * Create a new instance.
      *
-     * @param OperationFactoryInterface|null $factory
-     * @param ClientInterface|null $client
+     * @param OperationFactoryInterface $factory
+     * @param ClientInterface $client
      */
-    public function __construct(OperationFactoryInterface $factory = null, ClientInterface $client = null)
-    {
-        $this->factory = $factory ?? new OperationFactory();
-        $this->client = $client ?? new Client();
+    public function __construct(
+        protected readonly OperationFactoryInterface $factory = new OperationFactory(),
+        protected readonly ClientInterface $client = new Client()
+    ) {
     }
 
     /**

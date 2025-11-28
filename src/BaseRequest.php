@@ -30,22 +30,24 @@ abstract class BaseRequest implements LogisticsInterface
     protected array $content = [];
     protected string $serverUrl = 'https://ccore.newebpay.com/API/Logistic'; // Default to test env
     protected LoggerInterface $logger;
-    protected EncryptionService $encryptionService;
-
     /**
      * Create a new instance.
      *
      * @param string $merchantId
      * @param string $hashKey
      * @param string $hashIV
+     * @param EncryptionService $encryptionService
      */
-    public function __construct(string $merchantId = '', string $hashKey = '', string $hashIV = '', ?EncryptionService $encryptionService = null)
-    {
+    public function __construct(
+        string $merchantId = '',
+        string $hashKey = '',
+        string $hashIV = '',
+        protected EncryptionService $encryptionService = new EncryptionService()
+    ) {
         $this->logger = new NullLogger();
         $this->setMerchantID($merchantId);
         $this->setHashKey($hashKey);
         $this->setHashIV($hashIV);
-        $this->encryptionService = $encryptionService ?? new EncryptionService();
         $this->initContent();
     }
 
@@ -216,8 +218,8 @@ abstract class BaseRequest implements LogisticsInterface
             'UID_' => $this->merchantID,
             'EncryptData_' => $encryptedData,
             'HashData_' => $hashData,
-            'Version_' => Version::V_1_0,
-            'RespondType_' => RespondType::JSON,
+            'Version_' => Version::V_1_0->value,
+            'RespondType_' => RespondType::JSON->value,
         ];
     }
 

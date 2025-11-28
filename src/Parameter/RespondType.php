@@ -2,10 +2,10 @@
 
 namespace CarlLee\NewebPayLogistics\Parameter;
 
-class RespondType
+enum RespondType: string
 {
     /**
      * JSON
      */
-    public const JSON = 'JSON';
+    case JSON = 'JSON';
 }

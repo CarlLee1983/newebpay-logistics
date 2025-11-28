@@ -17,6 +17,7 @@ $print = $logistics->printOrder();
 // Set parameters
 $print->setLogisticsID('LOGISTICS_ID_12345'); // Replace with actual Logistics ID
 $print->setMerchantTradeNo('TRADE_12345'); // Replace with actual Merchant Trade No
+$print->setTimeStamp(time());
 
 // Send request
 try {

@@ -138,9 +138,17 @@ $print->setMerchantTradeNo('TRADE_NO');
 - [查詢訂單](examples/example_query_order.php)
 - [列印託運單](examples/example_print_order.php)
 
+## 測試
+
+執行單元測試：
+
+```bash
+vendor/bin/phpunit
+```
+
 ## 使用 Docker 進行開發
 
-本專案支援使用 Docker 進行開發，提供一致的 PHP 7.4 環境。
+本專案支援使用 Docker 進行開發，提供一致的 PHP 8.3 環境。
 
 ### 前置需求
 
@@ -164,8 +172,7 @@ $print->setMerchantTradeNo('TRADE_NO');
 3. **執行測試：**
 
    ```bash
-   docker-compose run --rm php php examples/test_encryption.php
-   docker-compose run --rm php php examples/test_instantiation.php
+   docker-compose run --rm php vendor/bin/phpunit
    ```
 
 4. **進入容器 Shell：**

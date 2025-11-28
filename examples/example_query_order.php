@@ -17,6 +17,7 @@ $query = $logistics->query();
 // Set parameters
 $query->setLogisticsID('LOGISTICS_ID_12345'); // Replace with actual Logistics ID
 $query->setMerchantTradeNo('TRADE_12345'); // Replace with actual Merchant Trade No
+$query->setTimeStamp(time());
 
 // Send request
 try {

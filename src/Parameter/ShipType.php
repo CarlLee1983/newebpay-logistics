@@ -2,25 +2,25 @@
 
 namespace CarlLee\NewebPayLogistics\Parameter;
 
-class ShipType
+enum ShipType: string
 {
     /**
      * 7-11
      */
-    public const SEVEN_ELEVEN = '1';
+    case SEVEN_ELEVEN = '1';
 
     /**
      * 全家
      */
-    public const FAMILY = '2';
+    case FAMILY = '2';
 
     /**
      * 萊爾富
      */
-    public const HILIFE = '3';
+    case HILIFE = '3';
 
     /**
      * OK
      */
-    public const OK = '4';
+    case OK = '4';
 }

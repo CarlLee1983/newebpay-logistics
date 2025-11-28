@@ -2,15 +2,15 @@
 
 namespace CarlLee\NewebPayLogistics\Parameter;
 
-class LgsType
+enum LgsType: string
 {
     /**
      * B2C (Bulk to Store)
      */
-    public const B2C = 'B2C';
+    case B2C = 'B2C';
 
     /**
      * C2C (Store to Store)
      */
-    public const C2C = 'C2C';
+    case C2C = 'C2C';
 }

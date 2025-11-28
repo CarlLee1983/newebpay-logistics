@@ -2,15 +2,15 @@
 
 namespace CarlLee\NewebPayLogistics\Parameter;
 
-class TradeType
+enum TradeType: string
 {
     /**
      * Payment on Delivery
      */
-    public const PAYMENT = '1';
+    case PAYMENT = '1';
 
     /**
      * Non-Payment on Delivery
      */
-    public const NON_PAYMENT = '3';
+    case NON_PAYMENT = '3';
 }

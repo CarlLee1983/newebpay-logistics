@@ -55,7 +55,7 @@ class NewebPayLogisticsTest extends TestCase
             ->once()
             ->andReturn(new GuzzleResponse(200, [], 'Status=SUCCESS&Message=Test'));
 
-        $logistics = new NewebPayLogistics(null, $client);
+        $logistics = new NewebPayLogistics(client: $client);
         $logistics->getFactory()->setCredentials('MERCHANT_ID', 'HASH_KEY', 'HASH_IV');
 
         $request = Mockery::mock(MapRequest::class);

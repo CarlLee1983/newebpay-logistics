@@ -140,9 +140,17 @@ Check the `examples/` directory for complete example scripts:
 - [Query Order](examples/example_query_order.php)
 - [Print Order](examples/example_print_order.php)
 
+## Testing
+
+To run the unit tests:
+
+```bash
+vendor/bin/phpunit
+```
+
 ## Development with Docker
 
-This project supports development using Docker, which provides a consistent PHP 7.4 environment.
+This project supports development using Docker, which provides a consistent PHP 8.3 environment.
 
 ### Prerequisites
 
@@ -166,8 +174,7 @@ This project supports development using Docker, which provides a consistent PHP 
 3. **Run tests:**
 
    ```bash
-   docker-compose run --rm php php examples/test_encryption.php
-   docker-compose run --rm php php examples/test_instantiation.php
+   docker-compose run --rm php vendor/bin/phpunit
    ```
 
 4. **Enter the container shell:**
