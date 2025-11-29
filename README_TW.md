@@ -83,6 +83,44 @@ $html = $formBuilder->build($map);
 echo $html;
 ```
 
+### 1-1. 前端整合 (Frontend Integration - Vue/React)
+
+如果您使用前後端分離架構 (如 Vue, React)，您可以透過 API 回傳表單資料，讓前端自行送出表單。
+
+```php
+$data = $formBuilder->getFormData($map);
+
+// 回傳 JSON 給前端
+echo json_encode($data);
+
+// 輸出範例：
+// {
+//     "url": "https://ccore.newebpay.com/API/Logistic/map",
+//     "method": "post",
+//     "params": {
+//         "MerchantID_": "...",
+//         "PostData_": "...",
+//         "TradeSha": "..."
+//     }
+// }
+```
+
+### 1-2. 伺服器端轉跳 (Server-side Redirect)
+
+由於藍新物流 API (如電子地圖) 需要使用 POST 傳送加密資料，因此無法使用一般的伺服器端 HTTP 302 轉跳 (`header("Location: ...")`)，因為這樣無法攜帶 POST 資料。
+
+若您希望由伺服器端控制轉跳，請使用以下兩種方式之一：
+
+1. **自動送出表單 (Auto Submit Form)**：
+   使用 `$formBuilder->autoSubmit($map)` 產生包含 JavaScript 的 HTML，瀏覽器載入後會自動送出表單。
+
+   ```php
+   echo $formBuilder->autoSubmit($map);
+   ```
+
+2. **前端送出 (Frontend Submit)**：
+   如上節所示，將資料回傳給前端，由前端透過 JavaScript 建立表單並送出。
+
 ### 2. 建立物流訂單 (Create Order)
 
 建立物流訂單 (B2C/C2C)。

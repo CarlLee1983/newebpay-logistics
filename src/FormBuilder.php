@@ -75,6 +75,21 @@ class FormBuilder
     }
 
     /**
+     * Get form data for frontend usage (e.g., Vue, React).
+     *
+     * @param BaseRequest $logistics
+     * @return array
+     */
+    public function getFormData(BaseRequest $logistics): array
+    {
+        return [
+            'url' => $this->getActionUrl($logistics),
+            'method' => 'post',
+            'params' => $this->getFields($logistics),
+        ];
+    }
+
+    /**
      * Get form fields.
      *
      * @param BaseRequest $logistics
