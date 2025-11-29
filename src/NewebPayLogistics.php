@@ -125,4 +125,45 @@ class NewebPayLogistics
     {
         return $this->factory;
     }
+
+    /**
+     * Get a FormBuilder instance.
+     *
+     * @return FormBuilder
+     */
+    public function getFormBuilder(): FormBuilder
+    {
+        // Use the same server URL as the factory, but we need to extract it or assume default.
+        // OperationFactory doesn't expose serverUrl publicly but it uses it to set on BaseRequest.
+        // We can create a temporary request to get the base URL, or just default to the known one.
+        // However, a better way is to check if we can get it from the factory.
+        // Since OperationFactory stores it, but it's protected.
+        // Let's rely on the BaseRequest knowing its URL.
+
+        // Actually, we can just instantiate FormBuilder with default URL
+        // or let the user configure it.
+        // But to be consistent, we should try to use the configured URL.
+
+        // A simple workaround: create a dummy request to get the base URL.
+        $dummy = $this->factory->make('map');
+        // The BaseRequest stores full URL: serverUrl . requestPath
+        // requestPath for map is /map
+        $fullUrl = $dummy->getUrl();
+        $serverUrl = str_replace('/map', '', $fullUrl);
+
+        return new FormBuilder($serverUrl);
+    }
+
+    /**
+     * Generate HTML form for redirection (Auto Submit or Button).
+     *
+     * @param BaseRequest $request
+     * @param bool $autoSubmit
+     * @return string
+     */
+    public function generateForm(BaseRequest $request, bool $autoSubmit = true): string
+    {
+        $builder = $this->getFormBuilder();
+        return $autoSubmit ? $builder->autoSubmit($request) : $builder->build($request);
+    }
 }
