@@ -69,4 +69,36 @@ class NewebPayLogisticsTest extends TestCase
         $this->assertTrue($response->isSuccess());
         $this->assertEquals('Test', $response->getMessage());
     }
+
+    public function testGetFormBuilder()
+    {
+        $logistics = NewebPayLogistics::create('MERCHANT_ID', 'HASH_KEY', 'HASH_IV');
+        $builder = $logistics->getFormBuilder();
+
+        $this->assertInstanceOf(\CarlLee\NewebPayLogistics\FormBuilder::class, $builder);
+        // Default URL is test env
+        $this->assertEquals('https://ccore.newebpay.com/API/Logistic/map', $builder->getActionUrl($logistics->map()));
+    }
+
+    public function testGenerateForm()
+    {
+        $logistics = NewebPayLogistics::create('MERCHANT_ID', 'HASH_KEY', 'HASH_IV');
+        $map = $logistics->map();
+        // Just set some dummy data so validation passes or at least fields are generated if validation is skipped by FormBuilder (FormBuilder just calls getContent)
+        // Actually FormBuilder calls getContent which calls getPayload which calls validation.
+        // So we need to provide minimal valid data or mock the request.
+
+        // Let's use a mock request to avoid validation complexity here
+        $request = Mockery::mock(MapRequest::class);
+        $request->shouldReceive('getContent')->andReturn(['MerchantID' => 'MERCHANT_ID']);
+        $request->shouldReceive('getRequestPath')->andReturn('/map');
+
+        $html = $logistics->generateForm($request, true);
+
+        $this->assertStringContainsString('<form', $html);
+        $this->assertStringContainsString('document.getElementById', $html);
+
+        $htmlButton = $logistics->generateForm($request, false);
+        $this->assertStringContainsString('<button', $htmlButton);
+    }
 }

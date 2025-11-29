@@ -115,6 +115,14 @@ echo json_encode($data);
    使用 `$formBuilder->autoSubmit($map)` 產生包含 JavaScript 的 HTML，瀏覽器載入後會自動送出表單。
 
    ```php
+   // 直接產生自動送出表單 HTML
+   echo $logistics->generateForm($map);
+   ```
+
+   或者透過 `FormBuilder` (若需自訂 Form ID 等)：
+
+   ```php
+   $formBuilder = $logistics->getFormBuilder();
    echo $formBuilder->autoSubmit($map);
    ```
 

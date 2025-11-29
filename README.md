@@ -85,6 +85,52 @@ $html = $formBuilder->build($map);
 echo $html;
 ```
 
+### 1-1. Frontend Integration (Vue/React)
+
+If you are using a decoupled frontend/backend architecture (like Vue, React), you can return the form data via API and let the frontend submit the form.
+
+```php
+$data = $formBuilder->getFormData($map);
+
+// Return JSON to frontend
+echo json_encode($data);
+
+// Output example:
+// {
+//     "url": "https://ccore.newebpay.com/API/Logistic/map",
+//     "method": "post",
+//     "params": {
+//         "MerchantID_": "...",
+//         "PostData_": "...",
+//         "TradeSha": "..."
+//     }
+// }
+```
+
+### 1-2. Server-side Redirect
+
+Since NewebPay Logistics API (like Map Interface) requires POST data transmission, standard server-side HTTP 302 redirects (`header("Location: ...")`) cannot be used as they don't carry POST data.
+
+If you want to control the redirect from the server side, use one of the following methods:
+
+1. **Auto Submit Form**:
+   Use `$formBuilder->autoSubmit($map)` to generate HTML containing JavaScript that automatically submits the form upon loading.
+
+   ```php
+   // Directly generate auto-submit form HTML
+   echo $logistics->generateForm($map);
+   ```
+
+   Or via `FormBuilder` (if you need to customize Form ID, etc.):
+
+   ```php
+   $formBuilder = $logistics->getFormBuilder();
+   echo $formBuilder->autoSubmit($map);
+   ```
+
+2. **Frontend Submit**:
+   As shown in the previous section, return the data to the frontend and let the frontend create and submit the form via JavaScript.
+
 ### 2. Create Order (建立物流訂單)
 
 Create a logistics order (B2C/C2C).
