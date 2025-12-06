@@ -51,7 +51,8 @@ class NewebPayLogisticsTest extends TestCase
     public function testSend()
     {
         $client = Mockery::mock(ClientInterface::class);
-        $client->shouldReceive('post')
+        $client->shouldReceive('request')
+            ->with('POST', Mockery::any(), Mockery::any())
             ->once()
             ->andReturn(new GuzzleResponse(200, [], 'Status=SUCCESS&Message=Test'));
 
@@ -84,7 +85,8 @@ class NewebPayLogisticsTest extends TestCase
     {
         $logistics = NewebPayLogistics::create('MERCHANT_ID', 'HASH_KEY', 'HASH_IV');
         $map = $logistics->map();
-        // Just set some dummy data so validation passes or at least fields are generated if validation is skipped by FormBuilder (FormBuilder just calls getContent)
+        // Just set some dummy data so validation passes or at least fields are generated if validation is skipped
+        // by FormBuilder (FormBuilder just calls getContent)
         // Actually FormBuilder calls getContent which calls getPayload which calls validation.
         // So we need to provide minimal valid data or mock the request.
 

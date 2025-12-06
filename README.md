@@ -1,8 +1,20 @@
 # NewebPay Logistics Integration PHP SDK
 
-[繁體中文](README_TW.md)
+[繁體中文](README_TW.md) | [English](README.md)
 
-A PHP SDK for integrating with NewebPay Logistics API (藍新金流物流 API).
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/carllee1983/newebpay-logistics.svg)](https://packagist.org/packages/carllee1983/newebpay-logistics)
+[![Run Tests](https://github.com/CarlLee1983/newebpay-logistics/actions/workflows/run-tests.yml/badge.svg)](https://github.com/CarlLee1983/newebpay-logistics/actions/workflows/run-tests.yml)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
+[![PHP Version](https://img.shields.io/badge/php-%5E8.1-blue)](https://packagist.org/packages/carllee1983/newebpay-logistics)
+
+A PHP SDK for integrating with the NewebPay Logistics API (藍新金流物流 API). This package simplifies the process of creating transactions, selecting stores (CVS), querying orders, and printing shipping labels.
+
+## Features
+
+- **Easy Integration**: Simple and intuitive API for common logistics operations.
+- **Framework Agnostic**: Works with any PHP project (bundled with Laravel support).
+- **Type Safety**: Utilizes PHP encapsulation to ensure data validity.
+- **Frontend Friendly**: Built-in support for generating HTML forms for frontend frameworks (Vue, React, etc.).
 
 ## Installation
 
@@ -14,7 +26,7 @@ composer require carllee1983/newebpay-logistics
 
 ## Configuration
 
-Initialize the library with your Merchant ID, Hash Key, and Hash IV:
+Initialize the library with your Merchant ID, Hash Key, and Hash IV.
 
 ```php
 use CarlLee\NewebPayLogistics\NewebPayLogistics;
@@ -23,20 +35,25 @@ $merchantId = 'YOUR_MERCHANT_ID';
 $hashKey = 'YOUR_HASH_KEY';
 $hashIV = 'YOUR_HASH_IV';
 
+// The last argument is optional for server URL override (defaults to testing env)
 $logistics = NewebPayLogistics::create($merchantId, $hashKey, $hashIV);
 ```
 
 ## Laravel Integration
 
-### Installation
+This package includes a Service Provider and Facade for seamless Laravel integration.
 
-1. Publish the configuration file:
+### 1. Installation
+
+Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag=newebpay-logistics-config
 ```
 
-2. Add the following variables to your `.env` file:
+### 2. Configuration
+
+Add the following variables to your `.env` file:
 
 ```env
 NEWEBPAY_LOGISTICS_MERCHANT_ID=your_merchant_id
@@ -46,17 +63,21 @@ NEWEBPAY_LOGISTICS_HASH_IV=your_hash_iv
 # NEWEBPAY_LOGISTICS_SERVER_URL=https://core.newebpay.com/API/Logistic
 ```
 
-### Usage
+### 3. Usage via Facade
 
-You can use the `NewebPayLogistics` facade:
+You can use the `NewebPayLogistics` facade anywhere in your Laravel application.
 
 ```php
 use NewebPayLogistics;
+use CarlLee\NewebPayLogistics\Parameter\ShipType;
 
 public function map()
 {
     $map = NewebPayLogistics::map();
+    $map->setShipType(ShipType::SEVEN_ELEVEN);
     // ...
+    
+    return NewebPayLogistics::generateForm($map);
 }
 ```
 
@@ -64,11 +85,9 @@ public function map()
 
 ### 1. Map Interface (電子地圖)
 
-Generate the HTML form to redirect the user to the logistics provider's map interface for store selection.
+Redirect the user to the logistics provider's map interface to select a store (7-11, FamilyMart, etc.).
 
 ```php
-use CarlLee\NewebPayLogistics\FormBuilder;
-
 use CarlLee\NewebPayLogistics\Parameter\LgsType;
 use CarlLee\NewebPayLogistics\Parameter\ShipType;
 
@@ -79,61 +98,25 @@ $map->setShipType(ShipType::SEVEN_ELEVEN);
 $map->setIsCollection('N'); // N: No collection, Y: Collection
 $map->setServerReplyURL('https://example.com/reply');
 
-$formBuilder = new FormBuilder();
-$html = $formBuilder->build($map);
-
-echo $html;
+// Generate auto-submit HTML form
+echo $logistics->generateForm($map);
 ```
 
-### 1-1. Frontend Integration (Vue/React)
+#### 1-1. Frontend Integration (Vue/React)
 
-If you are using a decoupled frontend/backend architecture (like Vue, React), you can return the form data via API and let the frontend submit the form.
+If you are using a decoupled architecture, return the form data as JSON.
 
 ```php
+$formBuilder = $logistics->getFormBuilder();
 $data = $formBuilder->getFormData($map);
 
-// Return JSON to frontend
 echo json_encode($data);
-
-// Output example:
-// {
-//     "url": "https://ccore.newebpay.com/API/Logistic/map",
-//     "method": "post",
-//     "params": {
-//         "MerchantID_": "...",
-//         "PostData_": "...",
-//         "TradeSha": "..."
-//     }
-// }
+// Output: {"url": "...", "method": "post", "params": { ... }}
 ```
-
-### 1-2. Server-side Redirect
-
-Since NewebPay Logistics API (like Map Interface) requires POST data transmission, standard server-side HTTP 302 redirects (`header("Location: ...")`) cannot be used as they don't carry POST data.
-
-If you want to control the redirect from the server side, use one of the following methods:
-
-1. **Auto Submit Form**:
-   Use `$formBuilder->autoSubmit($map)` to generate HTML containing JavaScript that automatically submits the form upon loading.
-
-   ```php
-   // Directly generate auto-submit form HTML
-   echo $logistics->generateForm($map);
-   ```
-
-   Or via `FormBuilder` (if you need to customize Form ID, etc.):
-
-   ```php
-   $formBuilder = $logistics->getFormBuilder();
-   echo $formBuilder->autoSubmit($map);
-   ```
-
-2. **Frontend Submit**:
-   As shown in the previous section, return the data to the frontend and let the frontend create and submit the form via JavaScript.
 
 ### 2. Create Order (建立物流訂單)
 
-Create a logistics order (B2C/C2C).
+Create a logistics order for B2C or C2C transactions.
 
 ```php
 use CarlLee\NewebPayLogistics\Parameter\LgsType;
@@ -145,89 +128,72 @@ $create->setMerchantTradeNo('TRADE' . time());
 $create->setLgsType(LgsType::B2C);
 $create->setShipType(ShipType::SEVEN_ELEVEN);
 $create->setTradeType(TradeType::PAYMENT);
-$create->setReceiverName('Test Receiver');
-$create->setReceiverPhone('0912345678');
+$create->setReceiverName('John Doe');
 $create->setReceiverCellPhone('0912345678');
-// ... set other parameters
+// ... more parameters
 
-// $response = $logistics->send($create);
+// This API usually responds with a redirect or direct result depending on the content
+// But strictly speaking, Create Order in some NewebPay flows is also a form post redirect.
+// Check official docs for specific flow.
 ```
 
 ### 3. Query Order (查詢物流訂單)
 
-Query the status of a logistics order.
+Query the status of an existing order.
 
 ```php
 $query = $logistics->query();
 $query->setLogisticsID('LOGISTICS_ID');
 $query->setMerchantTradeNo('TRADE_NO');
 
-// $response = $logistics->send($query);
-```
+// This is a direct API call
+$response = $logistics->send($query);
 
-### 4. Print Order (列印託運單)
-
-Generate the interface for printing the shipping label.
-
-```php
-$print = $logistics->printOrder();
-$print->setLogisticsID('LOGISTICS_ID');
-$print->setMerchantTradeNo('TRADE_NO');
-
-// $response = $logistics->send($print);
+if ($response->isSuccess()) {
+    echo "Status: " . $response->getMessage();
+}
 ```
 
 ## Examples
 
-Check the `examples/` directory for complete example scripts:
+Check the `examples/` directory for complete vanilla PHP scripts:
 
 - [Map Operation](examples/example_map.php)
 - [Create Order](examples/example_create_order.php)
 - [Query Order](examples/example_query_order.php)
 - [Print Order](examples/example_print_order.php)
 
-## Testing
+## FAQ
 
-To run the unit tests:
+**Q: How do I change the environment to Production?**
+A: By default, `NewebPayLogistics::create()` uses the testing URL. Pass the production URL as the 4th argument, or set `NEWEBPAY_LOGISTICS_SERVER_URL` in Laravel `.env`.
+
+**Q: Can I use this without Laravel?**
+A: Yes! The package is framework-agnostic. See the [Configuration](#configuration) section.
+
+**Q: I get a "Validation Validation" error.**
+A: Ensure all required fields are set. The SDK validates the request parameters before generating the payload.
+
+## Development
 
 ```bash
-vendor/bin/phpunit
+# Run tests
+composer test
+
+# Check code style
+composer check
+
+# Fix code style
+composer format
 ```
 
-## Development with Docker
+## Contributing
 
-This project supports development using Docker, which provides a consistent PHP 8.3 environment.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-### Prerequisites
+## Security
 
-- Docker
-- Docker Compose
-
-### Usage
-
-1. **Build the Docker image:**
-
-   ```bash
-   docker-compose build
-   ```
-
-2. **Run Composer commands:**
-
-   ```bash
-   docker-compose run --rm php composer install
-   ```
-
-3. **Run tests:**
-
-   ```bash
-   docker-compose run --rm php vendor/bin/phpunit
-   ```
-
-4. **Enter the container shell:**
-
-   ```bash
-   docker-compose run --rm php bash
-   ```
+If you discover any security related issues, please email carllee1983@gmail.com instead of using the issue tracker.
 
 ## License
 

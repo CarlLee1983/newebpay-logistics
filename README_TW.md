@@ -1,6 +1,20 @@
 # NewebPay Logistics Integration PHP SDK
 
-這是一個用於整合藍新金流物流 API 的 PHP SDK。
+[繁體中文](README_TW.md) | [English](README.md)
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/carllee1983/newebpay-logistics.svg)](https://packagist.org/packages/carllee1983/newebpay-logistics)
+[![Run Tests](https://github.com/CarlLee1983/newebpay-logistics/actions/workflows/run-tests.yml/badge.svg)](https://github.com/CarlLee1983/newebpay-logistics/actions/workflows/run-tests.yml)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
+[![PHP Version](https://img.shields.io/badge/php-%5E8.1-blue)](https://packagist.org/packages/carllee1983/newebpay-logistics)
+
+整合藍新金流物流 API (NewebPay Logistics API) 的 PHP SDK。此套件簡化了建立物流訂單、電子地圖選店、訂單查詢及託運單列印的流程。
+
+## 特色
+
+- **易於整合**：提供簡單直覺的 API 來處理常見的物流操作。
+- **框架無關**：適用於任何 PHP 專案（內建 Laravel 支援）。
+- **型別安全**：利用 PHP 封裝確保資料正確性。
+- **前端友善**：內建產生 HTML 表單功能，支援前端框架（如 Vue, React）。
 
 ## 安裝
 
@@ -12,7 +26,7 @@ composer require carllee1983/newebpay-logistics
 
 ## 設定
 
-使用您的商店代號 (Merchant ID)、Hash Key 和 Hash IV 初始化函式庫：
+使用您的商店代號 (Merchant ID)、Hash Key 和 Hash IV 初始化函式庫。
 
 ```php
 use CarlLee\NewebPayLogistics\NewebPayLogistics;
@@ -21,20 +35,25 @@ $merchantId = 'YOUR_MERCHANT_ID';
 $hashKey = 'YOUR_HASH_KEY';
 $hashIV = 'YOUR_HASH_IV';
 
+// 最後一個參數可選，用於覆寫伺服器網址 (預設為測試環境)
 $logistics = NewebPayLogistics::create($merchantId, $hashKey, $hashIV);
 ```
 
 ## Laravel 整合
 
-### 安裝
+本套件包含 Service Provider 和 Facade，可與 Laravel 無縫整合。
 
-1. 發布設定檔：
+### 1. 安裝
+
+發布設定檔：
 
 ```bash
 php artisan vendor:publish --tag=newebpay-logistics-config
 ```
 
-2. 在 `.env` 檔案中加入以下變數：
+### 2. 設定
+
+在 `.env` 檔案中加入以下變數：
 
 ```env
 NEWEBPAY_LOGISTICS_MERCHANT_ID=您的商店代號
@@ -44,17 +63,21 @@ NEWEBPAY_LOGISTICS_HASH_IV=您的HashIV
 # NEWEBPAY_LOGISTICS_SERVER_URL=https://core.newebpay.com/API/Logistic
 ```
 
-### 使用方法
+### 3. 使用 Facade
 
-您可以使用 `NewebPayLogistics` Facade：
+您可以在 Laravel 應用程式的任何地方使用 `NewebPayLogistics` Facade。
 
 ```php
 use NewebPayLogistics;
+use CarlLee\NewebPayLogistics\Parameter\ShipType;
 
 public function map()
 {
     $map = NewebPayLogistics::map();
+    $map->setShipType(ShipType::SEVEN_ELEVEN);
     // ...
+    
+    return NewebPayLogistics::generateForm($map);
 }
 ```
 
@@ -62,11 +85,9 @@ public function map()
 
 ### 1. 電子地圖 (Map Interface)
 
-產生 HTML 表單，將使用者導向至物流商的電子地圖介面以選擇門市。
+產生 HTML 表單，將使用者導向至物流商的電子地圖介面以選擇門市（如 7-11, 全家）。
 
 ```php
-use CarlLee\NewebPayLogistics\FormBuilder;
-
 use CarlLee\NewebPayLogistics\Parameter\LgsType;
 use CarlLee\NewebPayLogistics\Parameter\ShipType;
 
@@ -77,61 +98,25 @@ $map->setShipType(ShipType::SEVEN_ELEVEN);
 $map->setIsCollection('N'); // N: 不取款, Y: 取款
 $map->setServerReplyURL('https://example.com/reply');
 
-$formBuilder = new FormBuilder();
-$html = $formBuilder->build($map);
-
-echo $html;
+// 產生自動送出 HTML 表單
+echo $logistics->generateForm($map);
 ```
 
-### 1-1. 前端整合 (Frontend Integration - Vue/React)
+#### 1-1. 前端整合 (Vue/React)
 
-如果您使用前後端分離架構 (如 Vue, React)，您可以透過 API 回傳表單資料，讓前端自行送出表單。
+如果您使用前後端分離架構，請將表單資料以 JSON 格式回傳給前端。
 
 ```php
+$formBuilder = $logistics->getFormBuilder();
 $data = $formBuilder->getFormData($map);
 
-// 回傳 JSON 給前端
 echo json_encode($data);
-
-// 輸出範例：
-// {
-//     "url": "https://ccore.newebpay.com/API/Logistic/map",
-//     "method": "post",
-//     "params": {
-//         "MerchantID_": "...",
-//         "PostData_": "...",
-//         "TradeSha": "..."
-//     }
-// }
+// 輸出範例： {"url": "...", "method": "post", "params": { ... }}
 ```
-
-### 1-2. 伺服器端轉跳 (Server-side Redirect)
-
-由於藍新物流 API (如電子地圖) 需要使用 POST 傳送加密資料，因此無法使用一般的伺服器端 HTTP 302 轉跳 (`header("Location: ...")`)，因為這樣無法攜帶 POST 資料。
-
-若您希望由伺服器端控制轉跳，請使用以下兩種方式之一：
-
-1. **自動送出表單 (Auto Submit Form)**：
-   使用 `$formBuilder->autoSubmit($map)` 產生包含 JavaScript 的 HTML，瀏覽器載入後會自動送出表單。
-
-   ```php
-   // 直接產生自動送出表單 HTML
-   echo $logistics->generateForm($map);
-   ```
-
-   或者透過 `FormBuilder` (若需自訂 Form ID 等)：
-
-   ```php
-   $formBuilder = $logistics->getFormBuilder();
-   echo $formBuilder->autoSubmit($map);
-   ```
-
-2. **前端送出 (Frontend Submit)**：
-   如上節所示，將資料回傳給前端，由前端透過 JavaScript 建立表單並送出。
 
 ### 2. 建立物流訂單 (Create Order)
 
-建立物流訂單 (B2C/C2C)。
+建立 B2C 或 C2C 的物流訂單。
 
 ```php
 use CarlLee\NewebPayLogistics\Parameter\LgsType;
@@ -144,88 +129,71 @@ $create->setLgsType(LgsType::B2C);
 $create->setShipType(ShipType::SEVEN_ELEVEN);
 $create->setTradeType(TradeType::PAYMENT);
 $create->setReceiverName('測試收件人');
-$create->setReceiverPhone('0912345678');
 $create->setReceiverCellPhone('0912345678');
 // ... 設定其他參數
 
-// $response = $logistics->send($create);
+// 此 API 通常會回應轉導或直接結果，視具體參數與流程而定
+// 嚴格來說，部分建立訂單流程也是表單 Post 轉導
+// 請參閱官方文件確認具體流程
 ```
 
 ### 3. 查詢物流訂單 (Query Order)
 
-查詢物流訂單狀態。
+查詢既有訂單的狀態。
 
 ```php
 $query = $logistics->query();
 $query->setLogisticsID('LOGISTICS_ID');
 $query->setMerchantTradeNo('TRADE_NO');
 
-// $response = $logistics->send($query);
-```
+// 這是直接的 API 呼叫
+$response = $logistics->send($query);
 
-### 4. 列印託運單 (Print Order)
-
-產生列印託運單的介面。
-
-```php
-$print = $logistics->printOrder();
-$print->setLogisticsID('LOGISTICS_ID');
-$print->setMerchantTradeNo('TRADE_NO');
-
-// $response = $logistics->send($print);
+if ($response->isSuccess()) {
+    echo "Status: " . $response->getMessage();
+}
 ```
 
 ## 範例
 
-查看 `examples/` 目錄以獲取完整的範例腳本：
+查看 `examples/` 目錄以獲取完整的純 PHP 範例腳本：
 
-- [電子地圖](examples/example_map.php)
-- [建立訂單](examples/example_create_order.php)
-- [查詢訂單](examples/example_query_order.php)
-- [列印託運單](examples/example_print_order.php)
+- [電子地圖 (Map Operation)](examples/example_map.php)
+- [建立訂單 (Create Order)](examples/example_create_order.php)
+- [查詢訂單 (Query Order)](examples/example_query_order.php)
+- [列印託運單 (Print Order)](examples/example_print_order.php)
 
-## 測試
+## 常見問題 (FAQ)
 
-執行單元測試：
+**Q: 如何切換到正式環境？**
+A: `NewebPayLogistics::create()` 預設使用測試環境網址。請傳入第四個參數作為正式環境網址，或是在 Laravel `.env` 中設定 `NEWEBPAY_LOGISTICS_SERVER_URL`。
+
+**Q: 只有 Laravel 可以用嗎？**
+A: 不是！這個套件是框架無關的 (Framework Agnostic)。請參考 [設定](#設定) 章節。
+
+**Q: 我遇到 "Validation Validation" 錯誤。**
+A: 請確認所有必填欄位都已設定。SDK 會在產生 Payload 前驗證請求參數。
+
+## 開發
 
 ```bash
-vendor/bin/phpunit
+# 執行測試
+composer test
+
+# 檢查程式碼風格
+composer check
+
+# 修復程式碼風格
+composer format
 ```
 
-## 使用 Docker 進行開發
+## 貢獻
 
-本專案支援使用 Docker 進行開發，提供一致的 PHP 8.3 環境。
+請參閱 [CONTRIBUTING.md](CONTRIBUTING.md) 瞭解詳情。
 
-### 前置需求
+## 安全性
 
-- Docker
-- Docker Compose
-
-### 使用方法
-
-1. **建置 Docker 映像檔：**
-
-   ```bash
-   docker-compose build
-   ```
-
-2. **執行 Composer 指令：**
-
-   ```bash
-   docker-compose run --rm php composer install
-   ```
-
-3. **執行測試：**
-
-   ```bash
-   docker-compose run --rm php vendor/bin/phpunit
-   ```
-
-4. **進入容器 Shell：**
-
-   ```bash
-   docker-compose run --rm php bash
-   ```
+如果您發現任何安全性相關的問題，請發送電子郵件至 carllee1983@gmail.com，請勿使用 Issue Tracker。
 
 ## 授權
 

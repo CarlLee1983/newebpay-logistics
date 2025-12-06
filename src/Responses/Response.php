@@ -18,7 +18,7 @@ class Response
 
     /**
      * Get the parse error if any.
-     * 
+     *
      * @return string|null
      */
     public function getParseError(): ?string

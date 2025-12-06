@@ -29,8 +29,11 @@ class FormBuilder
      * @param string $submitText
      * @return string
      */
-    public function build(BaseRequest $logistics, string $formId = 'newebpay-logistics-form', string $submitText = 'Submit'): string
-    {
+    public function build(
+        BaseRequest $logistics,
+        string $formId = 'newebpay-logistics-form',
+        string $submitText = 'Submit'
+    ): string {
         $actionUrl = $this->getActionUrl($logistics);
         $fields = $this->getFields($logistics);
 
@@ -54,8 +57,11 @@ class FormBuilder
      * @param string $loadingText
      * @return string
      */
-    public function autoSubmit(BaseRequest $logistics, string $formId = 'newebpay-logistics-form', string $loadingText = 'Redirecting to NewebPay...'): string
-    {
+    public function autoSubmit(
+        BaseRequest $logistics,
+        string $formId = 'newebpay-logistics-form',
+        string $loadingText = 'Redirecting to NewebPay...'
+    ): string {
         $actionUrl = $this->getActionUrl($logistics);
         $fields = $this->getFields($logistics);
 
