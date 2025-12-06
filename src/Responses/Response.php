@@ -17,6 +17,16 @@ class Response
     private ?string $parseError = null;
 
     /**
+     * Get the parse error if any.
+     * 
+     * @return string|null
+     */
+    public function getParseError(): ?string
+    {
+        return $this->parseError;
+    }
+
+    /**
      * Create a new instance.
      *
      * @param string $body

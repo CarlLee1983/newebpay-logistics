@@ -65,7 +65,7 @@ class NewebPayLogistics
         $url = $request->getUrl();
 
         try {
-            $response = $this->client->post($url, [
+            $response = $this->client->request('POST', $url, [
                 'form_params' => $content,
             ]);
 

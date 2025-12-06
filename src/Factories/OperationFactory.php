@@ -20,12 +20,7 @@ class OperationFactory implements OperationFactoryInterface
         'hash_iv' => '',
     ];
 
-    /**
-     * HTTP client.
-     *
-     * @var ClientInterface
-     */
-    protected ClientInterface $client;
+
 
     /**
      * Server URL.

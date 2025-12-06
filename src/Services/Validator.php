@@ -76,8 +76,8 @@ class Validator
      */
     protected function validateEnum($value, string $className, string $field): void
     {
-        if (!enum_exists($className)) {
-             throw new NewebPayLogisticsException("Validation rule error: Enum {$className} not found");
+        if (!enum_exists($className) || !is_subclass_of($className, \BackedEnum::class)) {
+             throw new NewebPayLogisticsException("Validation rule error: Backed Enum {$className} not found");
         }
 
         if (!$className::tryFrom($value)) {
