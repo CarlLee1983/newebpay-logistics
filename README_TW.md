@@ -16,6 +16,12 @@
 - **型別安全**：利用 PHP 封裝確保資料正確性。
 - **前端友善**：內建產生 HTML 表單功能，支援前端框架（如 Vue, React）。
 
+## 系統需求 (Requirements)
+
+- PHP ^8.1
+- `ext-json` 擴充功能
+- `ext-openssl` 擴充功能
+
 ## 安裝
 
 透過 Composer 安裝：
@@ -38,6 +44,15 @@ $hashIV = 'YOUR_HASH_IV';
 // 最後一個參數可選，用於覆寫伺服器網址 (預設為測試環境)
 $logistics = NewebPayLogistics::create($merchantId, $hashKey, $hashIV);
 ```
+
+### 參數說明
+
+| 參數 | 適用性 | 說明 |
+| :--- | :--- | :--- |
+| `$merchantId` | **必填** | 藍新金流提供的商店代號 (Merchant ID)。 |
+| `$hashKey` | **必填** | 用於加密的 Hash Key。 |
+| `$hashIV` | **必填** | 用於加密的 Hash IV。 |
+| `$serverUrl` | 選填 | API 基礎網址。預設為測試環境：`https://ccore.newebpay.com/API/Logistic`。 |
 
 ## Laravel 整合
 

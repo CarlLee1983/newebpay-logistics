@@ -16,6 +16,12 @@ A PHP SDK for integrating with the NewebPay Logistics API (藍新金流物流 AP
 - **Type Safety**: Utilizes PHP encapsulation to ensure data validity.
 - **Frontend Friendly**: Built-in support for generating HTML forms for frontend frameworks (Vue, React, etc.).
 
+## Requirements
+
+- PHP ^8.1
+- `ext-json` extension
+- `ext-openssl` extension
+
 ## Installation
 
 Install via Composer:
@@ -26,7 +32,7 @@ composer require carllee1983/newebpay-logistics
 
 ## Configuration
 
-Initialize the library with your Merchant ID, Hash Key, and Hash IV.
+Initialize the library with your NewebPay Logistics credentials.
 
 ```php
 use CarlLee\NewebPayLogistics\NewebPayLogistics;
@@ -38,6 +44,15 @@ $hashIV = 'YOUR_HASH_IV';
 // The last argument is optional for server URL override (defaults to testing env)
 $logistics = NewebPayLogistics::create($merchantId, $hashKey, $hashIV);
 ```
+
+### Parameters
+
+| Parameter | Application | Description |
+| :--- | :--- | :--- |
+| `$merchantId` | **Required** | Your Shop ID (商店代號) provided by NewebPay. |
+| `$hashKey` | **Required** | Hash Key (HashKey) for encryption. |
+| `$hashIV` | **Required** | Hash IV (HashIV) for encryption. |
+| `$serverUrl` | Optional | API Base URL. Default is testing env: `https://ccore.newebpay.com/API/Logistic`. |
 
 ## Laravel Integration
 
