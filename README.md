@@ -174,6 +174,9 @@ A: Yes! The package is framework-agnostic. See the [Configuration](#configuratio
 **Q: I get a "Validation Validation" error.**
 A: Ensure all required fields are set. The SDK validates the request parameters before generating the payload.
 
+**Q: I get a "Check Value Error" or Decryption failure.**
+A: This usually means your Merchant ID, Hash Key, or Hash IV are incorrect. Please double check them. Also ensure there are no extra spaces in your keys. In some cases, ensure your input data doesn't contain encoded characters that might mess up the length calculation.
+
 ## Development
 
 ```bash

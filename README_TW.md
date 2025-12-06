@@ -174,6 +174,9 @@ A: 不是！這個套件是框架無關的 (Framework Agnostic)。請參考 [設
 **Q: 我遇到 "Validation Validation" 錯誤。**
 A: 請確認所有必填欄位都已設定。SDK 會在產生 Payload 前驗證請求參數。
 
+**Q: 我遇到 "Check Value Error" 或 解密失敗。**
+A: 這通常代表您的 Merchant ID、Hash Key 或 Hash IV 不正確。請重新檢查它們。同時請確保金鑰中沒有多餘的空白。在某些情況下，請確保輸入資料不包含可能影響長度計算的編碼字元。
+
 ## 開發
 
 ```bash
