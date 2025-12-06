@@ -162,6 +162,14 @@ Check the `examples/` directory for complete vanilla PHP scripts:
 - [Create Order](examples/example_create_order.php)
 - [Query Order](examples/example_query_order.php)
 - [Print Order](examples/example_print_order.php)
+- [Laravel Integration](examples/laravel_example.php)
+
+## API Reference
+
+For detailed API documentation, please refer to the files in the `doc/` directory:
+
+- [English API Reference](doc/api_reference_en.md)
+- [Traditional Chinese API Reference](doc/api_reference_tw.md)
 
 ## FAQ
 

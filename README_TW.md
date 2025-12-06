@@ -162,6 +162,14 @@ if ($response->isSuccess()) {
 - [建立訂單 (Create Order)](examples/example_create_order.php)
 - [查詢訂單 (Query Order)](examples/example_query_order.php)
 - [列印託運單 (Print Order)](examples/example_print_order.php)
+- [Laravel 整合範例 (Laravel Integration)](examples/laravel_example.php)
+
+## API 參考文件
+
+詳細的 API 說明文件請參考 `doc/` 目錄下的檔案：
+
+- [英文 API 參考文件](doc/api_reference_en.md)
+- [繁體中文 API 參考文件](doc/api_reference_tw.md)
 
 ## 常見問題 (FAQ)
 
