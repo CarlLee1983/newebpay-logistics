@@ -12,7 +12,8 @@
     "homepage": "https://github.com/CarlLee1983/newebpay-logistics",
     "support": {
         "issues": "https://github.com/CarlLee1983/newebpay-logistics/issues",
-        "source": "https://github.com/CarlLee1983/newebpay-logistics"
+        "source": "https://github.com/CarlLee1983/newebpay-logistics",
+        "email": "carllee1983@gmail.com"
     },
     "keywords": [
         "newebpay",
@@ -52,6 +53,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
         "laravel": {
             "providers": [
                 "CarlLee\\NewebPayLogistics\\Laravel\\NewebPayLogisticsServiceProvider"
